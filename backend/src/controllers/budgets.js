@@ -22,7 +22,7 @@ async function update(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  const updated = await budgetsService.updateBudget(req.user.id, parseInt(req.params.id, 10), req.body);
+  const updated = await budgetsService.updateBudget(req.user.id, req.params.id, req.body);
   if (!updated) return res.status(404).json({ message: 'Budget not found' });
   return res.json(updated);
 }
@@ -32,11 +32,11 @@ async function remove(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  await budgetsService.deleteBudget(req.user.id, parseInt(req.params.id, 10));
+  await budgetsService.deleteBudget(req.user.id, req.params.id);
   return res.status(204).send();
 }
 
-const idParamValidation = [param('id').isInt().withMessage('id must be an integer')];
+const idParamValidation = [param('id').isUUID(4).withMessage('id must be a UUID v4')];
 
 module.exports = {
   list,

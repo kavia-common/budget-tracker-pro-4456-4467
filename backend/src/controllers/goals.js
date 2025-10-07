@@ -19,7 +19,7 @@ async function create(req, res) {
 async function update(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-  const updated = await goalsService.updateGoal(req.user.id, parseInt(req.params.id, 10), req.body);
+  const updated = await goalsService.updateGoal(req.user.id, req.params.id, req.body);
   if (!updated) return res.status(404).json({ message: 'Goal not found' });
   return res.json(updated);
 }
@@ -28,7 +28,7 @@ async function update(req, res) {
 async function remove(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-  await goalsService.deleteGoal(req.user.id, parseInt(req.params.id, 10));
+  await goalsService.deleteGoal(req.user.id, req.params.id);
   return res.status(204).send();
 }
 
@@ -40,14 +40,14 @@ const createValidation = [
 ];
 
 const updateValidation = [
-  param('id').isInt(),
+  param('id').isUUID(4),
   body('name').optional().isString().isLength({ min: 1 }),
   body('target_amount').optional().isFloat({ min: 0 }),
   body('current_amount').optional().isFloat({ min: 0 }),
   body('due_date').optional().isISO8601(),
 ];
 
-const idParamValidation = [param('id').isInt().withMessage('id must be an integer')];
+const idParamValidation = [param('id').isUUID(4).withMessage('id must be a UUID v4')];
 
 module.exports = {
   list,

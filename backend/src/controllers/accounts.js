@@ -24,7 +24,7 @@ async function update(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  const updated = await accountsService.updateAccount(req.user.id, parseInt(req.params.id, 10), req.body);
+  const updated = await accountsService.updateAccount(req.user.id, req.params.id, req.body);
   if (!updated) return res.status(404).json({ message: 'Account not found' });
   return res.json(updated);
 }
@@ -32,7 +32,7 @@ async function update(req, res) {
 // PUBLIC_INTERFACE
 async function remove(req, res) {
   /** Deletes an account by id */
-  await accountsService.deleteAccount(req.user.id, parseInt(req.params.id, 10));
+  await accountsService.deleteAccount(req.user.id, req.params.id);
   return res.status(204).send();
 }
 
@@ -43,7 +43,7 @@ const createValidation = [
 ];
 
 const updateValidation = [
-  param('id').isInt().withMessage('id must be an integer'),
+  param('id').isUUID(4).withMessage('id must be a UUID v4'),
   body('name').optional().isString(),
   body('type').optional().isString(),
   body('balance').optional().isFloat(),

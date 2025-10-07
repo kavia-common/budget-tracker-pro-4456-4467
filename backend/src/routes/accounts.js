@@ -61,7 +61,7 @@ router.post('/', controller.createValidation, controller.create);
  *       - in: path
  *         name: id
  *         required: true
- *         schema: { type: integer }
+ *         schema: { type: string, format: uuid }
  *     requestBody:
  *       required: true
  *     responses:

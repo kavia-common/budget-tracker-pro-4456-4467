@@ -35,7 +35,7 @@ router.get('/', controller.list);
  *     parameters:
  *       - in: path
  *         name: id
- *         schema: { type: integer }
+ *         schema: { type: string, format: uuid }
  *         required: true
  *     responses:
  *       200: { description: Marked as read }

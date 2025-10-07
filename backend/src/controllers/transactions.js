@@ -13,7 +13,7 @@ async function list(req, res) {
     limit: req.query.limit ? parseInt(req.query.limit, 10) : undefined,
     from: req.query.from,
     to: req.query.to,
-    account_id: req.query.account_id ? parseInt(req.query.account_id, 10) : undefined,
+    account_id: req.query.account_id || undefined,
     category_id: req.query.category_id ? parseInt(req.query.category_id, 10) : undefined,
     type: req.query.type,
   };
@@ -37,7 +37,7 @@ async function update(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  const updated = await txService.updateTransaction(req.user.id, parseInt(req.params.id, 10), req.body);
+  const updated = await txService.updateTransaction(req.user.id, req.params.id, req.body);
   if (!updated) return res.status(404).json({ message: 'Transaction not found' });
   return res.json(updated);
 }
@@ -48,11 +48,11 @@ async function remove(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  await txService.deleteTransaction(req.user.id, parseInt(req.params.id, 10));
+  await txService.deleteTransaction(req.user.id, req.params.id);
   return res.status(204).send();
 }
 
-const idParamValidation = [param('id').isInt().withMessage('id must be an integer')];
+const idParamValidation = [param('id').isUUID(4).withMessage('id must be a UUID v4')];
 
 module.exports = {
   list,

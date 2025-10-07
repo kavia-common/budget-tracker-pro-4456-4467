@@ -3,7 +3,7 @@ const { query } = require('../config/db');
 // PUBLIC_INTERFACE
 async function listAccounts(userId) {
   /** Returns all accounts for a user */
-  const { rows } = await query('SELECT id, name, type, balance FROM accounts WHERE user_id = $1 ORDER BY id', [userId]);
+  const { rows } = await query('SELECT id, name, type, balance FROM accounts WHERE user_id = $1 ORDER BY name', [userId]);
   return rows;
 }
 

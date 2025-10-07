@@ -47,7 +47,7 @@ router.post('/', controller.createValidation, controller.create);
  *     parameters:
  *       - in: path
  *         name: id
- *         schema: { type: integer }
+ *         schema: { type: string, format: uuid }
  *         required: true
  *     responses:
  *       200: { description: Updated }

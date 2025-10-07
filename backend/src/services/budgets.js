@@ -3,10 +3,10 @@ const { query } = require('../config/db');
 // PUBLIC_INTERFACE
 async function listBudgets(userId) {
   const { rows } = await query(
-    `SELECT b.id, b.category_id, b.amount, b.period, b.active
+    `SELECT b.id, b.category_id, b.amount, b.month, b.period, b.active
      FROM budgets b
      WHERE b.user_id = $1
-     ORDER BY b.id`,
+     ORDER BY b.month NULLS LAST, b.category_id`,
     [userId]
   );
   return rows;
@@ -15,10 +15,10 @@ async function listBudgets(userId) {
 // PUBLIC_INTERFACE
 async function createBudget(userId, payload) {
   const { rows } = await query(
-    `INSERT INTO budgets (user_id, category_id, amount, period, active)
-     VALUES ($1, $2, $3, $4, true)
-     RETURNING id, category_id, amount, period, active`,
-    [userId, payload.category_id, payload.amount, payload.period]
+    `INSERT INTO budgets (user_id, category_id, month, amount, period, active)
+     VALUES ($1, $2, $3, $4, $5, COALESCE($6, true))
+     RETURNING id, category_id, month, amount, period, active`,
+    [userId, payload.category_id, payload.month || null, payload.amount, payload.period || null, payload.active]
   );
   return rows[0];
 }
@@ -31,6 +31,7 @@ async function updateBudget(userId, id, payload) {
 
   if (payload.category_id !== undefined) { fields.push(`category_id = $${idx++}`); values.push(payload.category_id); }
   if (payload.amount !== undefined) { fields.push(`amount = $${idx++}`); values.push(payload.amount); }
+  if (payload.month !== undefined) { fields.push(`month = $${idx++}`); values.push(payload.month); }
   if (payload.period !== undefined) { fields.push(`period = $${idx++}`); values.push(payload.period); }
   if (payload.active !== undefined) { fields.push(`active = $${idx++}`); values.push(payload.active); }
 
@@ -39,7 +40,7 @@ async function updateBudget(userId, id, payload) {
   values.push(userId, id);
   const { rows } = await query(
     `UPDATE budgets SET ${fields.join(', ')} WHERE user_id = $${idx++} AND id = $${idx}
-     RETURNING id, category_id, amount, period, active`,
+     RETURNING id, category_id, month, amount, period, active`,
     values
   );
   return rows[0] || null;

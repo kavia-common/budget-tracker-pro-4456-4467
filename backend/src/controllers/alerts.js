@@ -12,12 +12,12 @@ async function markRead(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  const updated = await alertsService.markRead(req.user.id, parseInt(req.params.id, 10));
+  const updated = await alertsService.markRead(req.user.id, req.params.id);
   if (!updated) return res.status(404).json({ message: 'Alert not found' });
   return res.json(updated);
 }
 
-const idParamValidation = [param('id').isInt().withMessage('id must be an integer')];
+const idParamValidation = [param('id').isUUID(4).withMessage('id must be a UUID v4')];
 
 module.exports = {
   list,

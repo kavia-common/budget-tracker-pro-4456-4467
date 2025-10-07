@@ -7,8 +7,8 @@ async function monthlySummary(userId, year, month) {
    */
   const { rows } = await query(
     `SELECT
-       SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END)::float AS income,
-       SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END)::float AS expense
+       SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END)::float AS income,
+       SUM(CASE WHEN amount < 0 THEN -amount ELSE 0 END)::float AS expense
      FROM transactions
      WHERE user_id = $1
        AND EXTRACT(YEAR FROM date) = $2
@@ -29,7 +29,7 @@ async function monthlySummary(userId, year, month) {
 async function categoryBreakdown(userId, year, month) {
   const { rows } = await query(
     `SELECT c.id as category_id, c.name as category_name,
-            SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END)::float AS total_spent
+            SUM(CASE WHEN t.amount < 0 THEN -t.amount ELSE 0 END)::float AS total_spent
      FROM categories c
      LEFT JOIN transactions t
        ON t.category_id = c.id AND t.user_id = $1

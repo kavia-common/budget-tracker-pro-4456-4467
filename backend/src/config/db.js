@@ -12,6 +12,14 @@ const connectionString = process.env.POSTGRES_URL;
 if (!connectionString) {
   // Log a clear message to assist configuration debugging
   console.warn('[DB] POSTGRES_URL is not set. Database features will fail until configured.');
+} else {
+  // Quick self-check: log masked URL host/port to verify DB port alignment (should often be 5001 in preview)
+  try {
+    const u = new URL(connectionString);
+    console.log(`[DB] Connecting to ${u.hostname}:${u.port || '(default)'} database ${u.pathname.replace('/', '')}`);
+  } catch (_) {
+    console.warn('[DB] POSTGRES_URL appears malformed. Please verify.');
+  }
 }
 
 const pool = new Pool({

@@ -35,10 +35,10 @@ router.use(auth);
  *         schema: { type: string, format: date }
  *       - in: query
  *         name: account_id
- *         schema: { type: integer }
+ *         schema: { type: string, format: uuid }
  *       - in: query
  *         name: category_id
- *         schema: { type: integer }
+ *         schema: { type: string, format: uuid }
  *       - in: query
  *         name: type
  *         schema: { type: string, enum: [income, expense] }
