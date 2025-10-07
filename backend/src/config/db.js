@@ -15,6 +15,7 @@ if (!connectionString) {
 }
 
 const pool = new Pool({
+  // Uses the POSTGRES_URL from environment; ensure it targets the DB (port 5001 in preview)
   connectionString,
   // For local dev environments, keep SSL disabled unless explicitly required by the provider
   ssl: false,

@@ -8,6 +8,7 @@ const swaggerSpec = require('../swagger');
 const app = express();
 
 app.use(cors({
+  // Development-friendly CORS; consider restricting in production
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
